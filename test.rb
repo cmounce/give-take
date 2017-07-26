@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require_relative 'rngtools'
+require 'set'
 require 'test/unit'
 
 class TestRngTools < Test::Unit::TestCase
@@ -82,5 +83,23 @@ class TestRngTools < Test::Unit::TestCase
         test(4, 5)
         test(5, 4)
         test(5, 5)
+    end
+
+    def test_generate_cycle_map
+        [0, 1, 2, 10].each do |n|
+            array = (1..n).to_a
+            cycle_map = RngTools.generate_cycle_map(array)
+            assert_equal(array.length, cycle_map.length)
+            assert_equal(array.to_set, cycle_map.keys.to_set)
+            assert_equal(array.to_set, cycle_map.values.to_set)
+
+            element = array[0]
+            array.length.times do
+                next_element = cycle_map[element]
+                assert(next_element != element) unless array.length == 1
+                element = next_element
+            end
+            assert_equal(array[0], element)
+        end
     end
 end

@@ -38,4 +38,13 @@ class RngTools
         end
         weights.map{|weight| self.generate_constrained_number(weight, bits_per_number - weight)}
     end
+
+    # Returns a max-length cycle over the elements of a.
+    # The cycle is a Hash of the form: {some_element => next_element_in_cycle}.
+    def self.generate_cycle_map(a)
+        cycle = a.clone
+        RngTools.secure_shuffle(cycle)
+        cycle.push(cycle[0])
+        cycle.each_cons(2).to_h
+    end
 end
