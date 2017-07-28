@@ -1,4 +1,4 @@
-require_relative 'rngtools'
+require 'rngtools'
 
 class CodeGenerator
     def initialize(label_prefix = "")
