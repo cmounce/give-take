@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift __dir__ + '/src'
-require 'codegen'
+require 'permutation'
 
-cg = CodeGenerator.new
-puts cg.generate_round_code 'ammo', 'torches', 'gems'
+p = Permutation.new(3)
+puts p.generate_code
