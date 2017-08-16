@@ -1,4 +1,27 @@
+require 'digest'
 require 'securerandom'
+
+class SeededSecureRandom
+    def initialize(seed = nil)
+        @seed = seed || SecureRandom.random_bytes(16)
+        @counter = 0
+    end
+
+    # Returns a random integer from 0 to n-1, inclusive.
+    # Assumes that n is relatively small (i.e., not a Bignum).
+    def random_number(n)
+        # Generate a large random number, using an algorithm based on MGF1.
+        # Security goal: predicting future outputs from past outputs (and vice-versa) should be infeasible.
+        # Not on the agenda: defending against state compromise (to which this algorithm is very vulnerable).
+        hash = Digest::SHA256.digest([@counter].pack('Q<') + @seed)
+        @counter += 1
+        r = hash.bytes.reduce(0){|acc, b| (acc << 8) + b}
+
+        # Calculating r modulo n is not strictly correct. But r's range is so
+        # ridiculously big that the chances of this introducing bias are negligible.
+        r%n
+    end
+end
 
 class RngTools
     # Shuffles the given array using SecureRandom.
