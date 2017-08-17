@@ -9,20 +9,14 @@ class Permutation
     # Generates ZZT-OOP code that computes a pseudorandom permutation.
     # The input data shall be in counters x and y. The output will also be in these counters.
     # Assumes the temporary counter is 0. The temporary counter will be 0 after the code completes.
-    # Specifying round constants (15-bit numbers) allows you to turn this into a keyed permutation.
-    def generate_code(round_constants = nil, counter_x: 'ammo', counter_y: 'gems', temp_counter: 'score', label_prefix: '')
+    def generate_code(counter_x: 'ammo', counter_y: 'gems', temp_counter: 'score', label_prefix: '')
         label_maker = LabelMaker.new(label_prefix)
-        round_constants = [1]*@rounds.length if round_constants == nil
 
         # Generate code for each round
         code = []
         full_counters = [counter_x, counter_y]
         empty_counter = temp_counter
-        @rounds.zip(round_constants).each do |round, round_constant|
-            # Add round constant
-            code << generate_wrapping_add_code(full_counters[0], round_constant)
-
-            # Compute a Feistel round
+        @rounds.each do |round|
             code << round.generate_code(full_counters[0], empty_counter, full_counters[1], label_maker)
             full_counters << empty_counter
             empty_counter = full_counters.shift
@@ -60,6 +54,9 @@ end
 
 class Round
     def initialize(rng)
+        # Pick a random number to be added to the counter-to-be-emptied before any other operations
+        @round_constant = rng.random_number(2**15)
+
         # Generate patterns for tabulation hashing.
         # Each pattern corresponds to a bit position.
         # hash(value) = sum of patterns for which value has a 1 bit, mod 2^15
@@ -77,6 +74,7 @@ class Round
     # - Store the modified value-to-be-moved in x_destination
     def generate_code(x_source, x_destination, y, label_maker)
         code = []
+        code << generate_wrapping_add_code(x_source, @round_constant)
         15.times.reverse_each do |src_bit|
             dest_bit = @bit_permutation[src_bit]
             label = label_maker.next_label
