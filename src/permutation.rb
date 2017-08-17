@@ -2,8 +2,8 @@ require 'rngtools'
 
 class Permutation
     def initialize(num_rounds, seed = nil)
-        #TODO: Handle seeds
-        @rounds = num_rounds.times.map{Round.new}
+        rng = RngTools.new(seed)
+        @rounds = num_rounds.times.map{Round.new(rng)}
     end
 
     # Generates ZZT-OOP code that computes a pseudorandom permutation.
@@ -59,15 +59,15 @@ class LabelMaker
 end
 
 class Round
-    def initialize
+    def initialize(rng)
         # Generate patterns for tabulation hashing.
         # Each pattern corresponds to a bit position.
         # hash(value) = sum of patterns for which value has a 1 bit, mod 2^15
-        @tabulation_hashing_patterns = RngTools.generate_balanced_numbers(15, 15)
+        @tabulation_hashing_patterns = rng.generate_balanced_numbers(15, 15)
 
         # Calculate how to rearrange the bits of value-to-be-moved.
         # Every bit changes location, and every bit will (with enough iterations) visit every location.
-        @bit_permutation = RngTools.generate_cycle_map((0..14).to_a)
+        @bit_permutation = rng.generate_cycle_map((0..14).to_a)
     end
 
     # Generates code that computes one round of a Feistel network:
