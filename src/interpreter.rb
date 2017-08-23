@@ -24,6 +24,7 @@ class Program
     end
 
     def run(counters = {})
+        # TODO: Consider using :ammo instead of 'ammo'
         default_counters = {
             'ammo' => 0,
             'gems' => 0,
@@ -85,7 +86,7 @@ class Parser
             elsif token == :command
                 command = parse_command
                 instructions << command
-                labels_without_instructions.each {|label| labels[label] = command}
+                labels_without_instructions.each {|label| labeled_instructions[label] = command}
                 labels_without_instructions = []
                 parse_end_of_line
             else

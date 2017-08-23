@@ -20,6 +20,16 @@ class TestInterpreter < Test::Unit::TestCase
         assert_equal 0, c['gems']
     end
 
+    def test_goto_label_in_middle_of_program
+        c = run_program '
+            #a
+            #give gems 1
+            :a
+            #give gems 2
+        '
+        assert_equal 2, c['gems']
+    end
+
     def test_give
         c = run_program '#give health 100'
         assert_equal 100, c['health']
