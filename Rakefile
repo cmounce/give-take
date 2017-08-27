@@ -14,7 +14,7 @@ task :unit do
     include_test_dir 'unit'
 end
 
-desc "Run statistical tests (slow)"
+desc "Run statistical tests (slow, may occasionally fail)"
 task :stat do
     include_test_dir 'stat'
 end
