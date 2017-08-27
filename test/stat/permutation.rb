@@ -13,9 +13,9 @@ class TestPermutation < Test::Unit::TestCase
     end
 
     def permute(n)
-        counters = {'ammo' => (n >> 15), 'gems' => (n & 0x7FFF)}
+        counters = {:ammo => (n >> 15), :gems => (n & 0x7FFF)}
         counters = @program.run(counters)
-        (counters['ammo'] << 15) | counters['gems']
+        (counters[:ammo] << 15) | counters[:gems]
     end
 
     def test_no_birthday_paradox

@@ -24,13 +24,12 @@ class Program
     end
 
     def run(counters = {})
-        # TODO: Consider using :ammo instead of 'ammo'
         default_counters = {
-            'ammo' => 0,
-            'gems' => 0,
-            'health' => 0,
-            'score' => 0,
-            'torches' => 0
+            :ammo => 0,
+            :gems => 0,
+            :health => 0,
+            :score => 0,
+            :torches => 0
         }
         counters = default_counters.merge(counters)
 
@@ -138,7 +137,7 @@ class Parser
     def parse_counter
         counter = parse_word
         raise "Invalid counter name #{counter.inspect}" unless counter =~ /^(ammo|gems|health|score|torches)$/
-        counter
+        counter.to_sym
     end
 
     def parse_int
