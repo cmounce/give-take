@@ -7,13 +7,44 @@ class TestRngTools < Test::Unit::TestCase
         @rng_tools = RngTools.new
     end
 
-    def test_secure_shuffle
+    def test_sample
+        def sample(n)
+            @rng_tools.sample (0..9).to_a, n
+        end
+        [0, 1, 9, 10].each do |n|
+            s = sample(n)
+            assert_equal n, s.length
+            assert_equal n, s.uniq.length
+            assert s.all?{|e| (0..9).cover?(e) }
+        end
+    end
+
+    def test_shuffle
         a = (0..9).to_a
-        @rng_tools.secure_shuffle(a)
+        a = @rng_tools.shuffle(a)
         assert_equal(10, a.length)
         (0..9).each do |x|
             assert_equal(1, a.count{|y| x == y})
         end
+    end
+
+    def test_binary_matrix_shuffle
+        unshuffleable_matrixes = [
+            [],
+            [[0]],
+            [[0, 1, 0]],
+            [[1], [0], [1]],
+            [[1, 1], [1, 1]]
+        ]
+        unshuffleable_matrixes.each do |m|
+            assert_equal m, @rng_tools.binary_matrix_shuffle(m)
+        end
+
+        # Shuffle a checkerboard
+        checkerboard = 8.times.map{|i| 8.times.map{|j| (i ^ j) & 1}}
+        shuffled = @rng_tools.binary_matrix_shuffle(checkerboard)
+        assert_equal [4]*8, shuffled.map{|row| row.count(1)}
+        assert_equal [4]*8, 8.times.map{|col| 8.times.map{|row| shuffled[row][col]}.count(1)}
     end
 
     def test_generate_constrained_number

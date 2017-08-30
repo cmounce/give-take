@@ -6,12 +6,13 @@ class TestRngTools < Test::Unit::TestCase
         @rng_tools = RngTools.new
     end
 
-    def test_secure_shuffle_fairness
+    def test_shuffle_fairness
+        # TODO: Another test for sample()?
         counts = {}
         num_samples = 10000
         num_samples.times do
             a = ['a', 'b', 'c', 'd']
-            @rng_tools.secure_shuffle(a)
+            a = @rng_tools.shuffle(a)
             key = a.join ''
             unless counts.key? key
                 counts[key] = 0
